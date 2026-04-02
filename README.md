@@ -365,6 +365,8 @@ NeuralModel --> ModelType
 ```
 
 <img width="809" height="1191" alt="image" src="https://github.com/user-attachments/assets/d0ce6f83-acb0-46f4-9ec9-8b109bd0a81a" />
+<img width="792" height="1187" alt="image" src="https://github.com/user-attachments/assets/3c5c3499-e6f8-4c76-b263-e1f5be9cef87" />
+
 
 ## Диаграмма диаграмма деятельности (activity)
 ```
