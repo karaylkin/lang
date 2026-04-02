@@ -42,6 +42,167 @@ UC8 .> UC10 : include
 ```
 <img width="483" height="826" alt="image" src="https://github.com/user-attachments/assets/808e07f6-e352-44c5-ab24-dcc41b2454b2" />
 
+## Диаграмма последовательности (sequence)
+
+```
+@startuml PhotoSystem
+
+skinparam style strictuml
+skinparam monochrome true
+skinparam shadowing false
+skinparam sequence {
+  ArrowColor #000
+  LifeLineBorderColor #000
+  LifeLineBackgroundColor #fff
+  ParticipantBorderColor #000
+  ParticipantBackgroundColor #fff
+  ParticipantFontSize 13
+  ArrowFontSize 12
+}
+skinparam ActorBorderColor #000
+skinparam ActorBackgroundColor #fff
+
+actor "User" as U
+participant "API" as A
+participant "Обработчик изображений" as IP
+participant "Нейромодель" as NM
+database "Хранилище S3" as S
+database "VectorDB" as VDB
+database "PostgreSQL" as DB
+
+== Загрузка фото ==
+
+U -> A : Загрузить фото
+activate A
+
+A -> IP : Проверить файл
+activate IP
+IP --> A : Данные EXIF
+A -> IP : Изменить размер и нормализовать
+IP --> A : Готовые байты
+deactivate IP
+
+A -> NM : Закодировать изображение
+activate NM
+NM --> A : Вектор
+deactivate NM
+
+A -> S : Сохранить оригинал
+activate S
+S --> A : Ссылка на файл
+deactivate S
+
+A -> VDB : Добавить вектор с метаданными
+note right
+  Дата съёмки
+  Координаты
+end note
+activate VDB
+VDB --> A : Успешно
+deactivate VDB
+
+A -> DB : Записать метаданные
+note right
+  Имя, ссылка на S3,
+  владелец, дата,
+  координаты
+end note
+
+A --> U : Фото загружено
+deactivate A
+
+== Поиск фото ==
+
+U -> A : Найти фото
+activate A
+
+A -> NM : Закодировать запрос
+activate NM
+NM --> A : Вектор запроса
+deactivate NM
+
+A -> VDB : Поиск с фильтрами
+note right
+  Дата съёмки
+  Геозона
+end note
+activate VDB
+VDB --> A : UUID найденных фото
+deactivate VDB
+
+A -> DB : Получить метаданные
+activate DB
+DB --> A : Данные фото
+deactivate DB
+
+A -> S : Сгенерировать ссылки
+activate S
+S --> A : Пресайнед URL
+deactivate S
+
+A --> U : Результаты поиска
+deactivate A
+
+@enduml
+```
+<img width="1152" height="1134" alt="image" src="https://github.com/user-attachments/assets/c0e3980a-0a82-44f8-b3f8-5f9865e39577" />
+
+
+## Диаграмма диаграмма состояний (state)
+```
+@startuml PhotoSystemStates
+
+skinparam monochrome true
+skinparam shadowing false
+skinparam state {
+  BorderColor #000
+  BackgroundColor #fff
+  FontSize 13
+  ArrowColor #000
+}
+
+[*] --> Неавторизован
+
+Неавторизован --> Авторизован : вход в систему
+Авторизован --> Неавторизован : выход из системы
+
+state "Загрузка фото" as Upload {
+  [*] --> ВыборФото
+  ВыборФото --> Проверка : файл выбран
+  Проверка --> Обработка : файл валиден
+  Проверка --> Ошибка : файл невалиден
+  Ошибка --> ВыборФото : повторить
+  Обработка --> ВычислениеВектора : EXIF извлечён\nразмер изменён
+  ВычислениеВектора --> СохранениеФайла : вектор получен
+  СохранениеФайла --> СохранениеВектора : файл сохранён в S3
+  СохранениеВектора --> СохранениеМетаданных : вектор сохранён в VectorDB
+  СохранениеМетаданных --> [*] : метаданные записаны
+}
+
+state "Поиск фото" as Search {
+  [*] --> ВводЗапроса
+  ВводЗапроса --> УстановкаФильтров : запрос введён
+  УстановкаФильтров --> КодированиеЗапроса : фильтры применены
+  КодированиеЗапроса --> ПоискВекторов : вектор получен
+  ПоискВекторов --> ПолучениеМетаданных : UUID найдены
+  ПоискВекторов --> НетРезультатов : совпадений нет
+  НетРезультатов --> ВводЗапроса : изменить запрос
+  ПолучениеМетаданных --> ГенерацияСсылок : метаданные получены
+  ГенерацияСсылок --> ПросмотрРезультатов : ссылки готовы
+  ПросмотрРезультатов --> [*] : выйти
+}
+
+Авторизован --> Upload : загрузить фото
+Авторизован --> Search : найти фото
+Upload --> Авторизован : завершено
+Search --> Авторизован : завершено
+
+@enduml
+
+```
+<img width="831" height="1163" alt="image" src="https://github.com/user-attachments/assets/6536318b-10c3-4a58-b852-a996a8e52616" />
+
+
 ## Диаграмма классов (classes)
 ```
 @startuml CloudStoragePhotos
@@ -203,166 +364,6 @@ NeuralModel --> ModelType
 @enduml
 ```
 <img width="809" height="1191" alt="image" src="https://github.com/user-attachments/assets/d0ce6f83-acb0-46f4-9ec9-8b109bd0a81a" />
-
-## Диаграмма последовательности (sequence)
-
-```
-@startuml PhotoSystem
-
-skinparam style strictuml
-skinparam monochrome true
-skinparam shadowing false
-skinparam sequence {
-  ArrowColor #000
-  LifeLineBorderColor #000
-  LifeLineBackgroundColor #fff
-  ParticipantBorderColor #000
-  ParticipantBackgroundColor #fff
-  ParticipantFontSize 13
-  ArrowFontSize 12
-}
-skinparam ActorBorderColor #000
-skinparam ActorBackgroundColor #fff
-
-actor "User" as U
-participant "API" as A
-participant "Обработчик изображений" as IP
-participant "Нейромодель" as NM
-database "Хранилище S3" as S
-database "VectorDB" as VDB
-database "PostgreSQL" as DB
-
-== Загрузка фото ==
-
-U -> A : Загрузить фото
-activate A
-
-A -> IP : Проверить файл
-activate IP
-IP --> A : Данные EXIF
-A -> IP : Изменить размер и нормализовать
-IP --> A : Готовые байты
-deactivate IP
-
-A -> NM : Закодировать изображение
-activate NM
-NM --> A : Вектор
-deactivate NM
-
-A -> S : Сохранить оригинал
-activate S
-S --> A : Ссылка на файл
-deactivate S
-
-A -> VDB : Добавить вектор с метаданными
-note right
-  Дата съёмки
-  Координаты
-end note
-activate VDB
-VDB --> A : Успешно
-deactivate VDB
-
-A -> DB : Записать метаданные
-note right
-  Имя, ссылка на S3,
-  владелец, дата,
-  координаты
-end note
-
-A --> U : Фото загружено
-deactivate A
-
-== Поиск фото ==
-
-U -> A : Найти фото
-activate A
-
-A -> NM : Закодировать запрос
-activate NM
-NM --> A : Вектор запроса
-deactivate NM
-
-A -> VDB : Поиск с фильтрами
-note right
-  Дата съёмки
-  Геозона
-end note
-activate VDB
-VDB --> A : UUID найденных фото
-deactivate VDB
-
-A -> DB : Получить метаданные
-activate DB
-DB --> A : Данные фото
-deactivate DB
-
-A -> S : Сгенерировать ссылки
-activate S
-S --> A : Пресайнед URL
-deactivate S
-
-A --> U : Результаты поиска
-deactivate A
-
-@enduml
-```
-<img width="1152" height="1134" alt="image" src="https://github.com/user-attachments/assets/c0e3980a-0a82-44f8-b3f8-5f9865e39577" />
-
-
-## Диаграмма диаграмма состояний (state)
-```
-@startuml PhotoSystemStates
-
-skinparam monochrome true
-skinparam shadowing false
-skinparam state {
-  BorderColor #000
-  BackgroundColor #fff
-  FontSize 13
-  ArrowColor #000
-}
-
-[*] --> Неавторизован
-
-Неавторизован --> Авторизован : вход в систему
-Авторизован --> Неавторизован : выход из системы
-
-state "Загрузка фото" as Upload {
-  [*] --> ВыборФото
-  ВыборФото --> Проверка : файл выбран
-  Проверка --> Обработка : файл валиден
-  Проверка --> Ошибка : файл невалиден
-  Ошибка --> ВыборФото : повторить
-  Обработка --> ВычислениеВектора : EXIF извлечён\nразмер изменён
-  ВычислениеВектора --> СохранениеФайла : вектор получен
-  СохранениеФайла --> СохранениеВектора : файл сохранён в S3
-  СохранениеВектора --> СохранениеМетаданных : вектор сохранён в VectorDB
-  СохранениеМетаданных --> [*] : метаданные записаны
-}
-
-state "Поиск фото" as Search {
-  [*] --> ВводЗапроса
-  ВводЗапроса --> УстановкаФильтров : запрос введён
-  УстановкаФильтров --> КодированиеЗапроса : фильтры применены
-  КодированиеЗапроса --> ПоискВекторов : вектор получен
-  ПоискВекторов --> ПолучениеМетаданных : UUID найдены
-  ПоискВекторов --> НетРезультатов : совпадений нет
-  НетРезультатов --> ВводЗапроса : изменить запрос
-  ПолучениеМетаданных --> ГенерацияСсылок : метаданные получены
-  ГенерацияСсылок --> ПросмотрРезультатов : ссылки готовы
-  ПросмотрРезультатов --> [*] : выйти
-}
-
-Авторизован --> Upload : загрузить фото
-Авторизован --> Search : найти фото
-Upload --> Авторизован : завершено
-Search --> Авторизован : завершено
-
-@enduml
-
-```
-<img width="831" height="1163" alt="image" src="https://github.com/user-attachments/assets/6536318b-10c3-4a58-b852-a996a8e52616" />
 
 ## Диаграмма диаграмма деятельности (activity)
 ```
