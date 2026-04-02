@@ -145,7 +145,7 @@ deactivate A
 
 @enduml
 ```
-<img width="1152" height="1134" alt="image" src="https://github.com/user-attachments/assets/c0e3980a-0a82-44f8-b3f8-5f9865e39577" />
+<img width="1156" height="1137" alt="image" src="https://github.com/user-attachments/assets/8a2e4230-b9f4-47df-a977-da3368a154c5" />
 
 
 ## Диаграмма диаграмма состояний (state)
