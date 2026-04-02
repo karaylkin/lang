@@ -307,7 +307,8 @@ deactivate A
 
 @enduml
 ```
-<img width="831" height="802" alt="image" src="https://github.com/user-attachments/assets/575a5af3-abec-48e3-b57f-b34f28f8b486" />
+<img width="1152" height="1134" alt="image" src="https://github.com/user-attachments/assets/c0e3980a-0a82-44f8-b3f8-5f9865e39577" />
+
 
 ## Диаграмма диаграмма состояний (state)
 ```
