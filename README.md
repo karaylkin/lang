@@ -363,6 +363,8 @@ NeuralModel --> ModelType
 
 @enduml
 ```
+<img width="792" height="1187" alt="image" src="https://github.com/user-attachments/assets/4d7a2bc9-4026-4f9e-a32f-3074fd815ba8" />
+
 <img width="809" height="1191" alt="image" src="https://github.com/user-attachments/assets/d0ce6f83-acb0-46f4-9ec9-8b109bd0a81a" />
 
 ## Диаграмма диаграмма деятельности (activity)
