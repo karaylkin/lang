@@ -202,8 +202,7 @@ NeuralModel --> ModelType
 
 @enduml
 ```
-<img width="621" height="898" alt="image" src="https://github.com/user-attachments/assets/9e2bc99f-3ad8-4a61-b82b-83e9b4df7e06" />
-
+<img width="809" height="1191" alt="image" src="https://github.com/user-attachments/assets/d0ce6f83-acb0-46f4-9ec9-8b109bd0a81a" />
 
 ## Диаграмма последовательности (sequence)
 
