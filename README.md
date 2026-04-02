@@ -181,7 +181,9 @@ NeuralModel --> ModelType
 @enduml
 ```
 <img width="831" height="933" alt="image" src="https://github.com/user-attachments/assets/78700ef7-17aa-49b2-bb3f-0dc4af91da16" />
+
 ## Диаграмма последовательности (sequence)
+
 ```
 @startuml PhotoSystem
 
@@ -335,6 +337,7 @@ Upload --> Авторизован : завершено
 Search --> Авторизован : завершено
 
 @enduml
+
 ```
 <img width="831" height="1163" alt="image" src="https://github.com/user-attachments/assets/6536318b-10c3-4a58-b852-a996a8e52616" />
 
