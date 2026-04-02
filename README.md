@@ -361,17 +361,12 @@ start
 
 :Открыть приложение;
 
-|Система|
-:Проверить токен;
-
-if (токен валиден?) then (нет)
-  |Пользователь|
-  :Регистрация / Вход;
-  |Система|
-  :Создать JWT токен;
+if (есть аккаунт?) then (нет)
+  :Регистрация;
+else (да)
+  :Вход в систему;
 endif
 
-|Пользователь|
 :Главный экран;
 
 fork
@@ -422,7 +417,6 @@ stop
 
 @enduml
 ```
-<img width="831" height="792" alt="image" src="https://github.com/user-attachments/assets/44a1b67e-27cd-4658-9127-6b8ba6c2a6f6" />
 <img width="1359" height="1192" alt="image" src="https://github.com/user-attachments/assets/ebcc5335-fbbf-4a2e-b259-a5180faf52ef" />
 
 
