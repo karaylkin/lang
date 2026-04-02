@@ -53,7 +53,9 @@ skinparam class {
   ArrowColor #555
   FontSize 13
 }
+skinparam linetype ortho
 
+' ── Уровень 1: Пользователь ──
 class User {
   - id: UUID
   - email: String
@@ -63,6 +65,15 @@ class User {
   + uploadPhoto(): Photo
 }
 
+class AuthService {
+  - jwtSecret: String
+  - tokenTtl: Int
+  + generateToken(user: User): JWT
+  + validate(token: JWT): Boolean
+  + refresh(token: JWT): JWT
+}
+
+' ── Уровень 2: Фото и обработка ──
 class Photo {
   - id: UUID
   - filename: String
@@ -78,6 +89,51 @@ class Photo {
   + getEmbedding(): EmbeddingVector
 }
 
+class ImageProcessor {
+  - maxSizeMb: Int
+  - allowedTypes: List~String~
+  + extractExif(bytes: byte[]): ExifData
+  + resize(bytes: byte[]): byte[]
+  + normalize(bytes: byte[]): byte[]
+  + validate(bytes: byte[]): Boolean
+}
+
+class ExifData {
+  - takenAt: LocalDateTime?
+  - latitude: Double?
+  - longitude: Double?
+  - cameraMake: String?
+  - cameraModel: String?
+}
+
+class StorageService {
+  - bucketUrl: String
+  - provider: String
+  + store(photo: Photo): URL
+  + remove(photoId: UUID): void
+  + getPresignedUrl(photoId: UUID): URL
+  + exists(photoId: UUID): Boolean
+}
+
+' ── Уровень 3: Поиск ──
+class SearchQuery {
+  - text: String?
+  - dateFrom: LocalDateTime?
+  - dateTo: LocalDateTime?
+  - latitude: Double?
+  - longitude: Double?
+  - radiusKm: Double?
+}
+
+class SearchEngine {
+  - threshold: Float
+  - topK: Int
+  + search(query: SearchQuery): List~Photo~
+  + indexPhoto(photo: Photo): void
+  + rerank(results: List~Photo~): List~Photo~
+}
+
+' ── Уровень 4: Эмбеддинги и нейромодель ──
 class EmbeddingVector {
   - vector: float[]
   - modelId: String
@@ -97,23 +153,13 @@ class NeuralModel {
   + isAvailable(): Boolean
 }
 
-class SearchQuery {
-  - text: String?
-  - dateFrom: LocalDateTime?
-  - dateTo: LocalDateTime?
-  - latitude: Double?
-  - longitude: Double?
-  - radiusKm: Double?
+enum ModelType {
+  CLIP
+  VIT
+  CUSTOM
 }
 
-class SearchEngine {
-  - threshold: Float
-  - topK: Int
-  + search(query: SearchQuery): List~Photo~
-  + indexPhoto(photo: Photo): void
-  + rerank(results: List~Photo~): List~Photo~
-}
-
+' ── Уровень 5: Хранилище векторов ──
 class VectorDB {
   - collection: String
   - dimensions: Int
@@ -124,64 +170,40 @@ class VectorDB {
   + count(): Long
 }
 
-class StorageService {
-  - bucketUrl: String
-  - provider: String
-  + store(photo: Photo): URL
-  + remove(photoId: UUID): void
-  + getPresignedUrl(photoId: UUID): URL
-  + exists(photoId: UUID): Boolean
-}
+' ══ Невидимые связи для выстраивания уровней ══
+User -[hidden]down- Photo
+User -[hidden]down- AuthService
+Photo -[hidden]down- SearchQuery
+Photo -[hidden]down- ImageProcessor
+ImageProcessor -[hidden]down- EmbeddingVector
+SearchQuery -[hidden]down- EmbeddingVector
+EmbeddingVector -[hidden]down- VectorDB
+NeuralModel -[hidden]down- VectorDB
 
-class ImageProcessor {
-  - maxSizeMb: Int
-  - allowedTypes: List~String~
-  + extractExif(bytes: byte[]): ExifData
-  + resize(bytes: byte[]): byte[]
-  + normalize(bytes: byte[]): byte[]
-  + validate(bytes: byte[]): Boolean
-}
-
-class AuthService {
-  - jwtSecret: String
-  - tokenTtl: Int
-  + generateToken(user: User): JWT
-  + validate(token: JWT): Boolean
-  + refresh(token: JWT): JWT
-}
-
-class ExifData {
-  - takenAt: LocalDateTime?
-  - latitude: Double?
-  - longitude: Double?
-  - cameraMake: String?
-  - cameraModel: String?
-}
-
-enum ModelType {
-  CLIP
-  VIT
-  CUSTOM
-}
-
-' Relationships
+' ══ Реальные связи ══
 User "1" o-- "*" Photo : владеет
+User ..> AuthService : аутентифицируется через
+
+Photo ..> StorageService : хранится в
 Photo "1" --> "1" EmbeddingVector
+
 ImageProcessor --> ExifData : извлекает
 ImageProcessor ..> Photo : обрабатывает
 ImageProcessor ..> NeuralModel : использует
-EmbeddingVector ..> NeuralModel : вычисляется через
-EmbeddingVector ..> VectorDB : хранится в
+
 SearchQuery --> SearchEngine : передаётся в
 SearchEngine ..> VectorDB : запрашивает
 SearchEngine ..> NeuralModel : кодирует через
-Photo ..> StorageService : хранится в
-User ..> AuthService : аутентифицируется через
+
+EmbeddingVector ..> NeuralModel : вычисляется через
+EmbeddingVector ..> VectorDB : хранится в
+
 NeuralModel --> ModelType
 
 @enduml
 ```
-<img width="831" height="933" alt="image" src="https://github.com/user-attachments/assets/78700ef7-17aa-49b2-bb3f-0dc4af91da16" />
+<img width="621" height="898" alt="image" src="https://github.com/user-attachments/assets/9e2bc99f-3ad8-4a61-b82b-83e9b4df7e06" />
+
 
 ## Диаграмма последовательности (sequence)
 
