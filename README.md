@@ -41,6 +41,7 @@ UC8 .> UC10 : include
 @enduml
 ```
 <img width="483" height="826" alt="image" src="https://github.com/user-attachments/assets/808e07f6-e352-44c5-ab24-dcc41b2454b2" />
+
 ## Диаграмма классов (classes)
 ```
 @startuml CloudStoragePhotos
