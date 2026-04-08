@@ -444,4 +444,16 @@ stop
 ```
 <img width="1359" height="1192" alt="image" src="https://github.com/user-attachments/assets/ebcc5335-fbbf-4a2e-b259-a5180faf52ef" />
 
+# Экраны
+## Вход
+<img width="665" height="959" alt="image" src="https://github.com/user-attachments/assets/686361e5-e504-4143-8c36-d1b6326c5676" />
+## Галерея 
+<img width="602" height="973" alt="image" src="https://github.com/user-attachments/assets/3b6d4c29-4d28-4c56-b55d-c915db3de0e4" />
+## Поиск
+<img width="604" height="937" alt="image" src="https://github.com/user-attachments/assets/67a9ff72-46c2-4977-9ed6-b0eed47cba53" />
+## Загрузка
+<img width="562" height="946" alt="image" src="https://github.com/user-attachments/assets/36b5483e-6a58-49ca-947b-6739faa8db42" />
+## Детали фото
+<img width="563" height="1000" alt="image" src="https://github.com/user-attachments/assets/255e7920-a958-44ad-919a-e73eafc4a319" />
+
 
