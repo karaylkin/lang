@@ -40,7 +40,7 @@ UC8 .> UC10 : include
 
 @enduml
 ```
-<img width="483" height="826" alt="image" src="https://github.com/user-attachments/assets/808e07f6-e352-44c5-ab24-dcc41b2454b2" />
+<img width="449" height="963" alt="image" src="https://github.com/user-attachments/assets/2d236a89-fc99-44cb-900e-f40195d5110d" />
 
 ## Диаграмма последовательности (sequence)
 
