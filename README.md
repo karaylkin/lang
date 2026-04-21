@@ -148,7 +148,7 @@ deactivate A
 <img width="1156" height="1137" alt="image" src="https://github.com/user-attachments/assets/8a2e4230-b9f4-47df-a977-da3368a154c5" />
 
 
-## Диаграмма диаграмма состояний (state)
+## Диаграмма состояний (state)
 ```
 @startuml PhotoSystemStates
 
@@ -367,7 +367,7 @@ NeuralModel --> ModelType
 <img width="792" height="1187" alt="image" src="https://github.com/user-attachments/assets/3c5c3499-e6f8-4c76-b263-e1f5be9cef87" />
 
 
-## Диаграмма диаграмма деятельности (activity)
+## Диаграмма деятельности (activity)
 ```
 @startuml FullLifecycle
 
